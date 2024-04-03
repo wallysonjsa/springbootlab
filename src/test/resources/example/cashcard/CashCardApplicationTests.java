@@ -41,14 +41,21 @@ class CashCardApplicationTests{
 	
 	@Test
 	void shouldCreatedANewCashCard() {
-		CashCard newCashCard = new CashCard(null, 250.0);
-		ResponseEntity<Void> createResponse = restTemplate.postForEntity("/cashcards", newCashCard, Void.class);
+		CashCard newCashCard = new CashCard(44L, 250.00);
+		ResponseEntity<Void> createResponseEntity = restTemplate.postForEntity("/cashcards", newCashCard, Void.class);
 		
-		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		assertThat(createResponseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		
-		URI locationOfNewCashCard = createResponse.getHeaders().getLocation();
-		ResponseEntity<String> getResponse = restTemplate.getForEntity(locationOfNewCashCard, String.class);
+		URI locationOfNewCashCardUri = createResponseEntity.getHeaders().getLocation();
+		ResponseEntity<String> getResponseEntity = restTemplate.getForEntity(locationOfNewCashCardUri, String.class);
 		
-		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(getResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext documentContext = JsonPath.parse(getResponseEntity.getBody());
+        Number id = documentContext.read("$.id");
+        Double amount = documentContext.read("$.amount");
+        
+        assertThat(id).isNotNull();
+        assertThat(amount).isEqualTo(250.00);
 	}
 }
