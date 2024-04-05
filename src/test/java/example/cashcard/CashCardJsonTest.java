@@ -49,8 +49,25 @@ class CashCardJsonTest {
                 {
                     "id": 99,
                     "amount": 123.45
+                },
+                {
+                    "id": 100,
+                    "amount": 1.00
+                },
+                {
+                    "id": 101,
+                    "amount": 150.00
                 }
-                """;
+                    """;    	
+
+
+        String expectedOne = """
+                {
+                    "id": 99,
+                    "amount": 123.45
+                }
+                    """;
+
         assertThat(json.parse(expected))
                 .isEqualTo(new CashCard(99L, 123.45));
         assertThat(json.parseObject(expected).id()).isEqualTo(99);

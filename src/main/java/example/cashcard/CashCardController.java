@@ -45,5 +45,10 @@ class CashCardController {
     			.toUri();
     	
     	return ResponseEntity.created(localtionOfNewCashCardBuilder).build();
-    }    
+    }
+    
+    @GetMapping
+    private ResponseEntity<Iterable<CashCard>> findAll(){
+    	return ResponseEntity.ok(cashCardRepository.findAll());
+    }
 }
