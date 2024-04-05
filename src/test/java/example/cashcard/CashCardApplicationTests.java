@@ -15,6 +15,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import static org.springframework.test.annotation.DirtiesContext.ClassMode;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.doubleThat;
 import static org.mockito.ArgumentMatchers.intThat;
 
 import java.net.URI;
@@ -92,5 +93,19 @@ class CashCardApplicationTests {
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
 		JSONArray page = documentContext.read("$[*]");
 		assertThat(page.size()).isEqualTo(3);
+	}
+	
+	@Test
+	void shouldReturnASortedPageOfCashCards() {
+		ResponseEntity<String> responseEntity = restTemplate.getForEntity("/cashcards?page=0&size=1&sort=amount,desc", String.class);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		
+		DocumentContext documentContext = JsonPath.parse(responseEntity.getBody());
+		
+		JSONArray read = documentContext.read("$[*]");
+		assertThat(read.size()).isEqualTo(1);
+		
+		double amount = documentContext.read("$[0].amount");
+		assertThat(amount).isEqualTo(150.0);		
 	}
 }
